@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  spark-connect-server:
+    image: apache/spark-py:3.5.3
+    container_name: spark-connect-server
+    ports:
+      - "15002:15002" # Spark Connect gRPC port
+      - "4040:4040"   # Spark Web UI
+    # Using spark-submit to run the Connect Service in the foreground
+    command: >
+      /opt/spark/bin/spark-submit
+      --packages org.apache.spark:spark-connect_2.12:3.5.3
+      --class org.apache.spark.sql.connect.SimpleSparkConnectService
+      local[*]
