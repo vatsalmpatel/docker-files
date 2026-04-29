@@ -1,21 +1,11 @@
-# Use a lightweight Node.js image
-FROM node:20-alpine
+# Use the official Node.js image (Debian-based for better tool support)
+FROM node:22
 
-# Set the working directory inside the container
+# Install git so you can clone the repo
+RUN apt-get update && apt-get install -y git
+
+# Set a default working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json first (for better caching)
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application code
-COPY . .
-
-# Expose the port Vite runs on (default is 5173)
-EXPOSE 5173
-
-# Run the app in development mode
-# Note: --host is required to allow access from outside the container
-CMD ["npm", "run", "dev", "--", "--host"]
+# Keeps the container running and drops you into a bash shell by default
+CMD ["/bin/bash"]
