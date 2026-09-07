@@ -3,5 +3,29 @@ services:
     image: floci/floci:latest
     ports:
       - "4566:4566"
+    environment:
+      FLOCI_STORAGE_MODE: persistent
+      FLOCI_STORAGE_PERSISTENT_PATH: /app/data
+      # Publish EC2 security-group ports starting at 8080 instead of the default 30000
+      FLOCI_SERVICES_EC2_APP_PORT_RANGE_START: "8080"
+      FLOCI_SERVICES_EC2_APP_PORT_RANGE_END: "8089"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - floci-data:/app/data
+
+  floci-ui:
+    image: floci/floci-ui:latest
+    ports:
+      - "4500:4500"
+    environment:
+      FLOCI_ENDPOINT: http://floci:4566
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      PORT: "4500"
+    depends_on:
+      floci:
+        condition: service_healthy
+
+volumes:
+  floci-data:
